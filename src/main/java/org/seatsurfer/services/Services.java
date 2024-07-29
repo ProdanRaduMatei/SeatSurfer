@@ -28,92 +28,6 @@ public class Services {
     @Autowired
     private SeatRepository seatsRepository;
 
-    // Building CRUD operations
-    public Buildings createBuilding(Buildings building) {
-        return buildingsRepository.save(building);
-    }
-
-    public Optional<Buildings> getBuilding(Long id) {
-        return buildingsRepository.findById(id);
-    }
-
-    public List<Buildings> getBuildings() {
-        return buildingsRepository.findAll();
-    }
-
-    public Buildings updateBuilding(Buildings building) {
-        return buildingsRepository.save(building);
-    }
-
-    public void deleteBuilding(Long id) {
-        buildingsRepository.deleteById(id);
-    }
-
-    // Storey CRUD operations
-    public Storeys createStorey(Storeys storey) {
-        return storeysRepository.save(storey);
-    }
-
-    public Optional<Storeys> getStorey(Long id) {
-        return storeysRepository.findById(id);
-    }
-
-    public List<Storeys> getStoreys() {
-        return storeysRepository.findAll();
-    }
-
-    public Storeys updateStorey(Storeys storey) {
-        return storeysRepository.save(storey);
-    }
-
-    public void deleteStorey(Long id) {
-        storeysRepository.deleteById(id);
-    }
-
-    // Seat CRUD operations
-    public Seats createSeat(Seats seat) {
-        return seatsRepository.save(seat);
-    }
-
-    public Optional<Seats> getSeat(Long id) {
-        return seatsRepository.findById(id);
-    }
-
-    public List<Seats> getSeats() {
-        return seatsRepository.findAll();
-    }
-
-    public Seats updateSeat(Seats seat) {
-        return seatsRepository.save(seat);
-    }
-
-    public void deleteSeat(Long id) {
-        seatsRepository.deleteById(id);
-    }
-
-    // User CRUD operations
-    public Users createUser(Users user) {
-        return usersRepository.save(user);
-    }
-
-    public Optional<Users> getUser(Long id) {
-        return usersRepository.findById(id);
-    }
-
-    public List<Users> getUsers() {
-        return usersRepository.findAll();
-    }
-
-    public void updateUser(Users newUser) {
-        Users oldUser = getUser(newUser.getId()).get();
-        oldUser.setName(newUser.getName());
-        oldUser.setIsAdmin(newUser.getIsAdmin());
-    }
-
-    public void deleteUser(Long id) {
-        usersRepository.deleteById(id);
-    }
-
     // Admin services
     // Admin adds a new storey to a building
     public Storeys addStorey(Long buildingId,  Long userId) {
@@ -203,17 +117,20 @@ public class Services {
     }
 
     // User books a seat
-    public void bookSeat(Long userId, Long seatId, Date occupiedDate) {
-        Optional<Seats> optionalSeat = seatsRepository.findById(seatId);
-        if (optionalSeat.isPresent()) {
-            Seats seat = optionalSeat.get();
-            if (seat.getSeat() && !seat.getOccupied()) {
-                seat.setOccupied(true);
-                seat.setUserId(userId);
-                seat.setOccupiedDate(occupiedDate);
-                seatsRepository.save(seat);
-            }
-        }
+    public void bookSeat(Long userId, Long seatId, Date date) {
+        Users user = usersRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Seats seat = seatsRepository.findById(seatId).orElseThrow(() -> new RuntimeException("Seat not found"));
+
+        if (!seat.getSeat())
+            throw new RuntimeException("Seat not available");
+        else if (seat.getOccupied())
+            throw new RuntimeException("Seat already booked");
+        else {
+        seat.setOccupied(true);
+        seat.setOccupiedDate(date);
+        seat.setUserId(userId);
+}
+        seatsRepository.save(seat);
     }
 
     // User updates a booking

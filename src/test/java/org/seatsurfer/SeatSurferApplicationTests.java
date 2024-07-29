@@ -13,7 +13,7 @@ import org.seatsurfer.repositories.BuildingRepository;
 import org.seatsurfer.repositories.SeatRepository;
 import org.seatsurfer.repositories.UsersRepository;
 import org.seatsurfer.repositories.StoreyRepository;
-import org.seatsurfer.services.Services;
+import org.seatsurfer.services.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.ParseException;
@@ -99,8 +99,32 @@ class SeatSurferApplicationTests {
     @Mock
     private UsersRepository usersRepository;
 
+    @Mock
+    private SeatRepository seatsRepository;
+
+    @Mock
+    private StoreyRepository storeysRepository;
+
+    @Mock
+    private BuildingRepository buildingsRepository;
+
+    @InjectMocks
+    private UsersServices usersServices;
+
+    @InjectMocks
+    private SeatsServices seatsServices;
+
+    @InjectMocks
+    private StoreysServices storeysServices;
+
+    @InjectMocks
+    private BuildingsServices buildingsServices;
+
     @InjectMocks
     private Services services;
+
+    @InjectMocks
+    private SeatSurferApplicationTests seatSurferApplicationTests;
 
     @BeforeEach
     void setUp() {
@@ -114,13 +138,14 @@ class SeatSurferApplicationTests {
         user.setName("John Doe");
         user.setIsAdmin(true);
 
-        when(usersRepository.save(user)).thenReturn(user);
+        when(usersRepository.save(any(Users.class))).thenReturn(user);
 
-        Users createdUser = services.createUser(user);
+        Users createdUser = usersServices.createUser(user);
 
-        assertNotNull(createdUser);
+        assertNotNull(createdUser, "The created user should not be null");
+        assertEquals(1L, createdUser.getId());
         assertEquals("John Doe", createdUser.getName());
-        assertEquals(true, createdUser.getIsAdmin());
+        assertTrue(createdUser.getIsAdmin());
     }
 
     @Test
@@ -132,9 +157,8 @@ class SeatSurferApplicationTests {
 
         when(usersRepository.findById(1L)).thenReturn(java.util.Optional.of(user));
 
-        Optional<Users> foundUser = services.getUser(1L);
+        Optional<Users> foundUser = usersServices.getUserById(1L);
 
-        assertNotNull(foundUser.isPresent());
         assertEquals("John Doe", foundUser.get().getName());
         assertTrue(foundUser.get().getIsAdmin());
     }
@@ -148,7 +172,7 @@ class SeatSurferApplicationTests {
 
         when(usersRepository.findAll()).thenReturn(java.util.List.of(user));
 
-        List<Users> foundUsers = services.getUsers();
+        List<Users> foundUsers = usersServices.getAllUsers();
 
         assertNotNull(foundUsers);
         assertEquals(1, foundUsers.size());
@@ -171,7 +195,7 @@ class SeatSurferApplicationTests {
         when(usersRepository.findById(1L)).thenReturn(java.util.Optional.of(oldUser));
         when(usersRepository.save(oldUser)).thenReturn(oldUser);
 
-        services.updateUser(updatedUser);
+        usersServices.updateUser(1L, updatedUser);
 
         assertNotNull(oldUser);
         assertEquals("Jane Doe", updatedUser.getName());
@@ -182,23 +206,20 @@ class SeatSurferApplicationTests {
     void testDeleteUser() {
         doNothing().when(usersRepository).deleteById(1L);
 
-        services.deleteUser(1L);
+        usersServices.deleteUser(1L);
 
         verify(usersRepository, times(1)).deleteById(1L);
     }
 
     // Test the Buildings services
-    @Mock
-    private BuildingRepository buildingsRepository;
-
     @Test
     void testCreateBuilding() {
         Buildings building = new Buildings();
         building.setId(1L);
 
-        when(buildingsRepository.save(building)).thenReturn(building);
+        when(buildingsRepository.save(any(Buildings.class))).thenReturn(building);
 
-        Buildings createdBuilding = services.createBuilding(building);
+        Buildings createdBuilding = buildingsServices.createBuilding(building);
 
         assertNotNull(createdBuilding);
         assertEquals(1L, createdBuilding.getId());
@@ -211,7 +232,7 @@ class SeatSurferApplicationTests {
 
         when(buildingsRepository.findById(1L)).thenReturn(java.util.Optional.of(building));
 
-        Optional<Buildings> foundBuilding = services.getBuilding(1L);
+        Optional<Buildings> foundBuilding = buildingsServices.getBuildingById(1L);
 
         assertNotNull(foundBuilding.isPresent());
         assertEquals(1L, foundBuilding.get().getId());
@@ -224,7 +245,7 @@ class SeatSurferApplicationTests {
 
         when(buildingsRepository.findAll()).thenReturn(java.util.List.of(building));
 
-        List<Buildings> foundBuildings = services.getBuildings();
+        List<Buildings> foundBuildings = buildingsServices.getAllBuildings();
 
         assertNotNull(foundBuildings);
         assertEquals(1, foundBuildings.size());
@@ -232,35 +253,15 @@ class SeatSurferApplicationTests {
     }
 
     @Test
-    void testUpdateBuilding() {
-        Buildings oldBuilding = new Buildings();
-        oldBuilding.setId(1L);
-
-        Buildings updatedBuilding = new Buildings();
-        updatedBuilding.setId(1L);
-
-        when(buildingsRepository.findById(1L)).thenReturn(java.util.Optional.of(oldBuilding));
-        when(buildingsRepository.save(oldBuilding)).thenReturn(oldBuilding);
-
-        services.updateBuilding(updatedBuilding);
-
-        assertNotNull(oldBuilding);
-        assertEquals(1L, updatedBuilding.getId());
-    }
-
-    @Test
     void testDeleteBuilding() {
         doNothing().when(buildingsRepository).deleteById(1L);
 
-        services.deleteBuilding(1L);
+        buildingsServices.deleteBuilding(1L);
 
         verify(buildingsRepository, times(1)).deleteById(1L);
     }
 
     // Test the Storeys services
-    @Mock
-    private StoreyRepository storeysRepository;
-
     @Test
     void testCreateStorey() {
         Storeys storey = new Storeys();
@@ -269,7 +270,7 @@ class SeatSurferApplicationTests {
 
         when(storeysRepository.save(storey)).thenReturn(storey);
 
-        Storeys createdStorey = services.createStorey(storey);
+        Storeys createdStorey = storeysServices.createStorey(storey);
 
         assertNotNull(createdStorey);
         assertEquals(1L, createdStorey.getId());
@@ -284,7 +285,7 @@ class SeatSurferApplicationTests {
 
         when(storeysRepository.findById(1L)).thenReturn(java.util.Optional.of(storey));
 
-        Optional<Storeys> foundStorey = services.getStorey(1L);
+        Optional<Storeys> foundStorey = storeysServices.getStoreyById(1L);
 
         assertNotNull(foundStorey.isPresent());
         assertEquals(1L, foundStorey.get().getId());
@@ -299,7 +300,7 @@ class SeatSurferApplicationTests {
 
         when(storeysRepository.findAll()).thenReturn(java.util.List.of(storey));
 
-        List<Storeys> foundStoreys = services.getStoreys();
+        List<Storeys> foundStoreys = storeysServices.getAllStoreys();
 
         assertNotNull(foundStoreys);
         assertEquals(1, foundStoreys.size());
@@ -320,7 +321,7 @@ class SeatSurferApplicationTests {
         when(storeysRepository.findById(1L)).thenReturn(java.util.Optional.of(oldStorey));
         when(storeysRepository.save(oldStorey)).thenReturn(oldStorey);
 
-        services.updateStorey(updatedStorey);
+        storeysServices.updateStorey(1L, updatedStorey);
 
         assertNotNull(oldStorey);
         assertEquals(1L, updatedStorey.getId());
@@ -331,15 +332,12 @@ class SeatSurferApplicationTests {
     void testDeleteStorey() {
         doNothing().when(storeysRepository).deleteById(1L);
 
-        services.deleteStorey(1L);
+        storeysServices.deleteStorey(1L);
 
         verify(storeysRepository, times(1)).deleteById(1L);
     }
 
     // Test the Seats services
-    @Mock
-    private SeatRepository seatsRepository;
-
     @Test
     void testCreateSeat() {
         Seats seat = new Seats();
@@ -355,7 +353,7 @@ class SeatSurferApplicationTests {
 
         when(seatsRepository.save(any(Seats.class))).thenReturn(seat);
 
-        Seats createdSeat = services.createSeat(seat);
+        Seats createdSeat = seatsServices.createSeat(seat);
 
         assertNotNull(createdSeat);
         assertEquals(1L, createdSeat.getId());
@@ -384,7 +382,7 @@ class SeatSurferApplicationTests {
 
         when(seatsRepository.findById(1L)).thenReturn(Optional.of(seat));
 
-        Optional<Seats> foundSeat = services.getSeat(1L);
+        Optional<Seats> foundSeat = seatsServices.getSeatById(1L);
 
         assertTrue(foundSeat.isPresent());
         assertEquals(1L, foundSeat.get().getId());
@@ -413,7 +411,7 @@ class SeatSurferApplicationTests {
 
         when(seatsRepository.findAll()).thenReturn(List.of(seat));
 
-        List<Seats> foundSeats = services.getSeats();
+        List<Seats> foundSeats = seatsServices.getAllSeats();
 
         assertNotNull(foundSeats);
         assertEquals(1, foundSeats.size());
@@ -455,7 +453,7 @@ class SeatSurferApplicationTests {
         when(seatsRepository.findById(1L)).thenReturn(Optional.of(oldSeat));
         when(seatsRepository.save(any(Seats.class))).thenReturn(updatedSeat);
 
-        Seats result = services.updateSeat(updatedSeat);
+        Seats result = seatsServices.updateSeat(1L, updatedSeat);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
@@ -473,7 +471,7 @@ class SeatSurferApplicationTests {
     void testDeleteSeat() {
         doNothing().when(seatsRepository).deleteById(1L);
 
-        services.deleteSeat(1L);
+        seatsServices.deleteSeat(1L);
 
         verify(seatsRepository, times(1)).deleteById(1L);
     }
