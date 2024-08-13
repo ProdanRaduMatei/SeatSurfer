@@ -1,9 +1,13 @@
 package org.seatsurfer.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Entity(name = "Users")
 @Table(
         name = "users",
@@ -14,7 +18,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 )
         }
 )
-public class Users {
+public class User {
 
     @Id
     @SequenceGenerator(
@@ -44,45 +48,4 @@ public class Users {
             nullable = false
     )
     private Boolean isAdmin;
-
-    public Users() {
-    }
-
-    public Users(String name, Boolean isAdmin) {
-        this.name = name;
-        this.isAdmin = isAdmin;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Boolean getIsAdmin() {
-        return isAdmin;
-    }
-
-    public void setIsAdmin(Boolean admin) {
-        isAdmin = admin;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", isAdmin=" + isAdmin +
-                '}';
-    }
 }

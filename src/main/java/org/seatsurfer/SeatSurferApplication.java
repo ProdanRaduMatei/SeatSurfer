@@ -1,11 +1,7 @@
 package org.seatsurfer;
 
-import org.seatsurfer.domain.Users;
-import org.seatsurfer.repositories.UsersRepository;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class SeatSurferApplication {
@@ -22,3 +18,6 @@ public class SeatSurferApplication {
 //        };
 //    }
 }
+
+
+// Todo: singular naming for the domain classes, citit despre lombok, cleanup cu lombok, repository -> , @Autowired -> @RequiredArgsConstructor, de citit articolele si despre mapari, lazy/eager initialisation, de citit de seqeunce,

@@ -1,7 +1,7 @@
-package org.seatsurfer.services;
+package org.seatsurfer.service;
 
-import org.seatsurfer.domain.Seats;
-import org.seatsurfer.repositories.SeatRepository;
+import org.seatsurfer.domain.Seat;
+import org.seatsurfer.persistence.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,32 +9,32 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class SeatsServices {
+public class SeatService {
     @Autowired
     private SeatRepository seatsRepository;
 
-    public List<Seats> getAllSeats() {
+    public List<Seat> getAllSeats() {
         return seatsRepository.findAll();
     }
 
-    public Optional<Seats> getSeatById(Long id) {
+    public Optional<Seat> getSeatById(Long id) {
         return seatsRepository.findById(id);
     }
 
-    public Seats createSeat(Seats seat) {
+    public Seat createSeat(Seat seat) {
         return seatsRepository.save(seat);
     }
 
-    public Seats updateSeat(Long id, Seats seatDetails) {
-        Seats seat = seatsRepository.findById(id).orElseThrow();
+    public Seat updateSeat(Long id, Seat seatDetails) {
+        Seat seat = seatsRepository.findById(id).orElseThrow();
         seat.setRow(seatDetails.getRow());
         seat.setCol(seatDetails.getCol());
-        seat.setSeat(seatDetails.getSeat());
-        seat.setOccupied(seatDetails.getOccupied());
+        seat.setIsSeat(seatDetails.getIsSeat());
+        seat.setIsOccupied(seatDetails.getIsOccupied());
         seat.setOccupiedDate(seatDetails.getOccupiedDate());
-        seat.setStoreyId(seatDetails.getStoreyId());
-        seat.setUserId(seatDetails.getUserId());
-        seat.setAdminId(seatDetails.getAdminId());
+        seat.setStorey(seatDetails.getStorey());
+        seat.setUser(seatDetails.getUser());
+        seat.setAdmin(seatDetails.getAdmin());
         return seatsRepository.save(seat);
     }
 

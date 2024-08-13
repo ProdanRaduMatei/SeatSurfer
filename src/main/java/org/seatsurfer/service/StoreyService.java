@@ -1,33 +1,33 @@
-package org.seatsurfer.services;
+package org.seatsurfer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.seatsurfer.repositories.StoreyRepository;
-import org.seatsurfer.domain.Storeys;
+import org.seatsurfer.persistence.StoreyRepository;
+import org.seatsurfer.domain.Storey;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StoreysServices {
+public class StoreyService {
     @Autowired
     private StoreyRepository storeyRepository;
 
-    public List<Storeys> getAllStoreys() {
+    public List<Storey> getAllStoreys() {
         return storeyRepository.findAll();
     }
 
-    public Optional<Storeys> getStoreyById(Long id) {
+    public Optional<Storey> getStoreyById(Long id) {
         return storeyRepository.findById(id);
     }
 
-    public Storeys createStorey(Storeys storey) {
+    public Storey createStorey(Storey storey) {
         return storeyRepository.save(storey);
     }
 
-    public Storeys updateStorey(Long id, Storeys storeyDetails) {
-        Storeys storey = storeyRepository.findById(id).orElseThrow();
-        storey.setBuildingId(storeyDetails.getBuildingId());
+    public Storey updateStorey(Long id, Storey storeyDetails) {
+        Storey storey = storeyRepository.findById(id).orElseThrow();
+        storey.setBuilding(storeyDetails.getBuilding());
         return storeyRepository.save(storey);
     }
 
