@@ -25,6 +25,13 @@ public class BuildingService {
         return buildingRepository.save(building);
     }
 
+    public Building updateBuilding(Long id, Building buildingDetails) {
+        Building building = buildingRepository.findById(id).orElseThrow();
+        building.setName(buildingDetails.getName());
+        building.setCreatedBy(buildingDetails.getCreatedBy());
+        return buildingRepository.save(building);
+    }
+
     public void deleteBuilding(Long id) {
         buildingRepository.deleteById(id);
     }

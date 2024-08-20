@@ -27,7 +27,9 @@ public class StoreyService {
 
     public Storey updateStorey(Long id, Storey storeyDetails) {
         Storey storey = storeyRepository.findById(id).orElseThrow();
-        storey.setBuilding(storeyDetails.getBuilding());
+        storey.setName(storeyDetails.getName());
+        storey.setBuildingId(storeyDetails.getBuildingId());
+        storey.setSeats(storeyDetails.getSeats());
         return storeyRepository.save(storey);
     }
 

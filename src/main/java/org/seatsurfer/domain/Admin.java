@@ -13,28 +13,32 @@ import java.util.List;
 @Data
 @Entity
 @Table(
-        name = "buildings",
+        name = "admins",
         uniqueConstraints = {
             @UniqueConstraint(
-                    name = "building_id_unique",
-                    columnNames = "id"
+                name = "user_name_unique",
+                columnNames = "name"
             ),
             @UniqueConstraint(
-                name = "building_name_unique",
-                columnNames = "name"
+                name = "user_email_unique",
+                columnNames = "email"
+            ),
+            @UniqueConstraint(
+                name = "user_password_unique",
+                columnNames = "password"
             )
         }
 )
-public class Building {
+public class Admin {
     @Id
     @SequenceGenerator(
-            name = "building_sequence",
-            sequenceName = "building_sequence",
+            name = "admin_sequence",
+            sequenceName = "admin_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "building_sequence"
+            generator = "admin_sequence"
     )
     private Long id;
 
@@ -46,18 +50,26 @@ public class Building {
     private String name;
 
     @Column(
-            name = "created_by",
-            nullable = false
+            name = "email",
+            nullable = false,
+            columnDefinition = "TEXT"
     )
-    private Long createdBy;
+    private String email;
+
+    @Column(
+            name = "password",
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
+    private String password;
 
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     @JoinColumn(
-            name = "storey_id",
+            name = "building_id",
             referencedColumnName = "id"
     )
-    private List<Storey> storeys = new ArrayList<>();
+    private List<Building> buildings = new ArrayList<>();
 }

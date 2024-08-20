@@ -1,16 +1,26 @@
 package org.seatsurfer.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity(name = "Seats")
+@Entity
 @Table(
-        name = "seats"
+        name = "seats",
+        uniqueConstraints = {
+            @UniqueConstraint(
+                name = "seat_id_unique",
+                columnNames = "id"
+            )
+        }
 )
 public class Seat {
     @Id
@@ -42,31 +52,35 @@ public class Seat {
     private Integer col;
 
     @Column(
-            name = "is_seat",
+            name = "creation_date",
             nullable = false
     )
-    private Boolean isSeat;
+    private Date creationDate;
 
     @Column(
-            name = "is_occupied",
-            nullable = false
+            name = "end_availabilty_date"
     )
-    private Boolean isOccupied;
+    private Date endAvailabilityDate;
 
     @Column(
-            name = "occupied_date",
-            nullable = false
+            name = "seat_type",
+            nullable = false,
+            columnDefinition = "TEXT"
     )
-    private Date occupiedDate;
+    private String seatType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Storey storey;
+    @Column(
+            name = "storey_id"
+    )
+    private Long storeyId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    private User user;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    private User admin;
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JoinColumn(
+            name = "booking_id",
+            referencedColumnName = "id"
+    )
+    private List<Booking> bookings = new ArrayList<>();
 }

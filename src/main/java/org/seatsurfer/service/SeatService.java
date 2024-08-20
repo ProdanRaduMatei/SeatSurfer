@@ -29,12 +29,11 @@ public class SeatService {
         Seat seat = seatsRepository.findById(id).orElseThrow();
         seat.setRow(seatDetails.getRow());
         seat.setCol(seatDetails.getCol());
-        seat.setIsSeat(seatDetails.getIsSeat());
-        seat.setIsOccupied(seatDetails.getIsOccupied());
-        seat.setOccupiedDate(seatDetails.getOccupiedDate());
-        seat.setStorey(seatDetails.getStorey());
-        seat.setUser(seatDetails.getUser());
-        seat.setAdmin(seatDetails.getAdmin());
+        seat.setCreationDate(seatDetails.getCreationDate());
+        seat.setEndAvailabilityDate(seatDetails.getEndAvailabilityDate());
+        seat.setSeatType(seatDetails.getSeatType());
+        seat.setStoreyId(seatDetails.getStoreyId());
+        seat.setBookings(seatDetails.getBookings());
         return seatsRepository.save(seat);
     }
 
