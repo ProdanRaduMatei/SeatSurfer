@@ -30,14 +30,9 @@ import java.sql.Date;
 )
 public class Booking {
     @Id
-    @SequenceGenerator(
-            name = "booking_sequence",
-            sequenceName = "booking_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "booking_sequence"
+    @Column(
+        name = "id",
+        updatable = false
     )
     private Long id;
 

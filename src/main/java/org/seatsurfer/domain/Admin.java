@@ -31,14 +31,9 @@ import java.util.List;
 )
 public class Admin {
     @Id
-    @SequenceGenerator(
-            name = "admin_sequence",
-            sequenceName = "admin_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "admin_sequence"
+    @Column(
+            name = "id",
+            updatable = false
     )
     private Long id;
 
@@ -64,12 +59,21 @@ public class Admin {
     private String password;
 
     @OneToMany(
+            mappedBy = "admin",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JoinColumn(
-            name = "building_id",
-            referencedColumnName = "id"
-    )
     private List<Building> buildings = new ArrayList<>();
+
+    // Add Building to Admin
+    public void addBuilding(Building building) {
+        buildings.add(building);
+        building.setAdmin(this);
+    }
+
+    // Remove Building from Admin
+    public void removeBuilding(Building building) {
+        buildings.remove(building);
+        building.setAdmin(null);
+    }
 }

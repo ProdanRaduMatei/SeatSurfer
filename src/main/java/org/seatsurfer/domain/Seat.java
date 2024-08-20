@@ -24,15 +24,6 @@ import java.util.List;
 )
 public class Seat {
     @Id
-    @SequenceGenerator(
-            name = "seat_sequence",
-            sequenceName = "seat_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            generator = "seat_sequence",
-            strategy = GenerationType.SEQUENCE
-    )
     @Column(
             name = "id",
             updatable = false
@@ -69,18 +60,27 @@ public class Seat {
     )
     private String seatType;
 
-    @Column(
-            name = "storey_id"
+    @ManyToOne(
+            fetch = FetchType.LAZY
     )
-    private Long storeyId;
+    private Storey storey;
 
     @OneToMany(
+            mappedBy = "seat",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JoinColumn(
-            name = "booking_id",
-            referencedColumnName = "id"
-    )
     private List<Booking> bookings = new ArrayList<>();
+
+    // Add Booking to Seat
+    public void addBooking(Booking booking) {
+        bookings.add(booking);
+        booking.setSeat(this);
+    }
+
+    // Remove Booking from Seat
+    public void removeBooking(Booking booking) {
+        bookings.remove(booking);
+        booking.setSeat(null);
+    }
 }

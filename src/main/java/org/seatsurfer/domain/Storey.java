@@ -27,15 +27,6 @@ import java.util.List;
 )
 public class Storey {
     @Id
-    @SequenceGenerator(
-            name = "storey_sequence",
-            sequenceName = "storey_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            generator = "storey_sequence",
-            strategy = GenerationType.SEQUENCE
-    )
     @Column(
             name = "id",
             updatable = false
@@ -61,19 +52,27 @@ public class Storey {
     )
     final private Integer maxCols = 25;
 
-    @Column(
-            name = "building_id",
-            nullable = false
+    @ManyToOne(
+            fetch = FetchType.LAZY
     )
-    private Long buildingId;
+    private Building building;
 
     @OneToMany(
+            mappedBy = "storey",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JoinColumn(
-            name = "seat_id",
-            referencedColumnName = "id"
-    )
     private List<Seat> seats = new ArrayList<>();
+
+    // Add Seat to Storey
+    public void addSeat(Seat seat) {
+        seats.add(seat);
+        seat.setStorey(this);
+    }
+
+    // Remove Seat from Storey
+    public void removeSeat(Seat seat) {
+        seats.remove(seat);
+        seat.setStorey(null);
+    }
 }
