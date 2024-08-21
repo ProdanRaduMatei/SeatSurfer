@@ -32,7 +32,7 @@ public class SeatService {
         seat.setCreationDate(seatDetails.getCreationDate());
         seat.setEndAvailabilityDate(seatDetails.getEndAvailabilityDate());
         seat.setSeatType(seatDetails.getSeatType());
-        seat.setStoreyId(seatDetails.getStoreyId());
+        seat.setStorey(seatDetails.getStorey());
         seat.setBookings(seatDetails.getBookings());
         return seatsRepository.save(seat);
     }

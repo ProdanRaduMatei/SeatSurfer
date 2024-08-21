@@ -12,66 +12,29 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(
-        name = "admins",
-        uniqueConstraints = {
-            @UniqueConstraint(
-                name = "user_name_unique",
-                columnNames = "name"
-            ),
-            @UniqueConstraint(
-                name = "user_email_unique",
-                columnNames = "email"
-            ),
-            @UniqueConstraint(
-                name = "user_password_unique",
-                columnNames = "password"
-            )
-        }
-)
+@Table(name = "admins")
 public class Admin {
     @Id
-    @Column(
-            name = "id",
-            updatable = false
-    )
+    @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(
-            name = "name",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(
-            name = "email",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(
-            name = "password",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(
-            mappedBy = "admin",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Building> buildings = new ArrayList<>();
 
-    // Add Building to Admin
     public void addBuilding(Building building) {
         buildings.add(building);
         building.setAdmin(this);
     }
 
-    // Remove Building from Admin
     public void removeBuilding(Building building) {
         buildings.remove(building);
         building.setAdmin(null);

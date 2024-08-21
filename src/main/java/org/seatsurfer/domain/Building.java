@@ -12,53 +12,26 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(
-        name = "buildings",
-        uniqueConstraints = {
-            @UniqueConstraint(
-                    name = "building_id_unique",
-                    columnNames = "id"
-            ),
-            @UniqueConstraint(
-                name = "building_name_unique",
-                columnNames = "name"
-            )
-        }
-)
+@Table(name = "buildings")
 public class Building {
     @Id
-    @Column(
-            name = "id",
-            updatable = false
-    )
+    @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(
-            name = "name",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(
-            fetch = FetchType.LAZY
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
     private Admin admin;
 
-    @OneToMany(
-            mappedBy = "building",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Storey> storeys = new ArrayList<>();
 
-    // Add Storey to Building
     public void addStorey(Storey storey) {
         storeys.add(storey);
         storey.setBuilding(this);
     }
 
-    // Remove Storey from Building
     public void removeStorey(Storey storey) {
         storeys.remove(storey);
         storey.setBuilding(null);
