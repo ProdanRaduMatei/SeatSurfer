@@ -20,4 +20,5 @@ public class SeatSurferApplication {
 }
 
 
-// Todo: singular naming for the domain classes, citit despre lombok, cleanup cu lombok, repository -> , @Autowired -> @RequiredArgsConstructor, de citit articolele si despre mapari, lazy/eager initialisation, de citit de seqeunce,
+// Todo: singular naming for the domain classes, citit despre lombok, cleanup cu lombok, repository -> , @Autowired -> @RequiredArgsConstructor, de citit articolele si despre mapari, lazy/eager initialisation, de citit de seqeunce; utlity methods, +add, remove;|
+// Todo:
