@@ -16,11 +16,12 @@ import java.util.List;
 @Table(name = "seats")
 public class Seat {
     @Id
+    @GeneratedValue
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "row", nullable = false)
-    private Integer row;
+    @Column(name = "line", nullable = false)
+    private Integer line;
 
     @Column(name = "col", nullable = false)
     private Integer col;

@@ -27,7 +27,7 @@ public class SeatService {
 
     public Seat updateSeat(Long id, Seat seatDetails) {
         Seat seat = seatsRepository.findById(id).orElseThrow();
-        seat.setRow(seatDetails.getRow());
+        seat.setLine(seatDetails.getLine());
         seat.setCol(seatDetails.getCol());
         seat.setCreationDate(seatDetails.getCreationDate());
         seat.setEndAvailabilityDate(seatDetails.getEndAvailabilityDate());
