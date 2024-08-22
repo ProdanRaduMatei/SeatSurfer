@@ -15,6 +15,7 @@ import java.util.List;
 @Table(name = "buildings")
 public class Building {
     @Id
+    @GeneratedValue
     @Column(name = "id", updatable = false)
     private Long id;
 

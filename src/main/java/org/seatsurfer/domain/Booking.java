@@ -14,6 +14,7 @@ import java.time.Instant;
 @Table(name = "bookings")
 public class Booking {
     @Id
+    @GeneratedValue
     @Column(name = "id", updatable = false)
     private Long id;
 
