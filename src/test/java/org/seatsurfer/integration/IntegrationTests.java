@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -139,49 +140,85 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testAdmin() {
+    public void testAddBuilding() {
         Admin admin = adminRepository.findAll().get(0);
-        assertEquals("Admin Name", admin.getName());
-        assertEquals("admin@gmail.com", admin.getEmail());
-        assertEquals("password", admin.getPassword());
-        assertEquals(1, adminRepository.findAll().size());
-        assertEquals(1, admin.getBuildings().size());
+        Building building = new Building();
+        building.setName("Building Name2");
+        admin.addBuilding(building);
+        assertEquals(2, admin.getBuildings().size());
+        assertEquals(admin, building.getAdmin());
     }
 
     @Test
-    public void testBuilding() {
+    public void testRemoveBuilding() {
+        Admin admin = adminRepository.findAll().get(0);
         Building building = buildingRepository.findAll().get(0);
-        assertEquals("Building Name", building.getName());
-        assertEquals(1, buildingRepository.findAll().size());
-        assertEquals(1, building.getStoreys().size());
+        admin.removeBuilding(building);
+        assertEquals(0, admin.getBuildings().size());
+        assertNull(building.getAdmin());
     }
 
     @Test
-    public void testStorey() {
+    public void testAddStorey() {
+        Building building = buildingRepository.findAll().get(0);
+        Storey storey = new Storey();
+        storey.setName("Storey Name2");
+        building.addStorey(storey);
+        assertEquals(2, building.getStoreys().size());
+        assertEquals(building, storey.getBuilding());
+    }
+
+    @Test
+    public void testRemoveStorey() {
+        Building building = buildingRepository.findAll().get(0);
         Storey storey = storeyRepository.findAll().get(0);
-        assertEquals("Storey Name", storey.getName());
-        assertEquals(1, storeyRepository.findAll().size());
-        assertEquals(4, storey.getSeats().size());
+        building.removeStorey(storey);
+        assertEquals(0, building.getStoreys().size());
+        assertNull(storey.getBuilding());
     }
 
     @Test
-    public void testSeat() {
-        Seat seat = seatRepository.findAll().get(3);
-        assertEquals(2, seat.getLine());
-        assertEquals(2, seat.getCol());
-        assertEquals(Instant.parse("2021-01-01T00:00:00Z"), seat.getCreationDate());
-        assertEquals(Instant.parse("2021-01-01T00:00:00Z"), seat.getEndAvailabilityDate());
-        assertEquals("No Monitors", seat.getSeatType());
-        assertEquals(4, seatRepository.findAll().size());
-        assertEquals(0, seat.getBookings().size());
+    public void testAddSeat() {
+        Storey storey = storeyRepository.findAll().get(0);
+        Seat seat = new Seat();
+        seat.setLine(3);
+        seat.setCol(3);
+        seat.setCreationDate(Instant.parse("2021-01-01T00:00:00Z"));
+        seat.setEndAvailabilityDate(Instant.parse("2021-01-01T00:00:00Z"));
+        seat.setSeatType("No Monitors");
+        storey.addSeat(seat);
+        assertEquals(5, storey.getSeats().size());
+        assertEquals(storey, seat.getStorey());
     }
 
     @Test
-    public void testBooking() {
+    public void testRemoveSeat() {
+        Storey storey = storeyRepository.findAll().get(0);
+        Seat seat = seatRepository.findAll().get(0);
+        storey.removeSeat(seat);
+        assertEquals(3, storey.getSeats().size());
+        assertNull(seat.getStorey());
+    }
+
+    @Test
+    public void testAddBooking() {
+        Seat seat = seatRepository.findAll().get(0);
+        Booking booking = new Booking();
+        booking.setDate(Instant.parse("2021-01-01T00:00:00Z"));
+        booking.setSeat(seat);
+        booking.setUserName("User Name5");
+        booking.setEmail("user5@gmail.com");
+        seat.addBooking(booking);
+        assertEquals(3, seat.getBookings().size());
+        assertEquals(seat, booking.getSeat());
+    }
+
+    @Test
+    public void testRemoveBooking() {
+        Seat seat = seatRepository.findAll().get(0);
         Booking booking = bookingRepository.findAll().get(0);
-        assertEquals(Instant.parse("2021-01-01T00:00:00Z"), booking.getDate());
-        assertEquals("User Name1", booking.getUserName());
-        assertEquals("user1@gmail.com", booking.getEmail());
-        assertEquals(4, bookingRepository.findAll().size());
+        seat.removeBooking(booking);
+        assertEquals(1, seat.getBookings().size());
+        assertNull(booking.getSeat());
     }
 }
