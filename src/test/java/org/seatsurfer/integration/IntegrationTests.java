@@ -150,6 +150,15 @@ public class IntegrationTests {
     }
 
     @Test
+    public void testUpdateBuilding() {
+        Admin admin = adminRepository.findAll().get(0);
+        Building building = buildingRepository.findAll().get(0);
+        building.setName("Building Name2");
+        admin.addBuilding(building);
+        assertEquals("Building Name2", building.getName());
+    }
+
+    @Test
     public void testRemoveBuilding() {
         Admin admin = adminRepository.findAll().get(0);
         Building building = buildingRepository.findAll().get(0);
@@ -166,6 +175,15 @@ public class IntegrationTests {
         building.addStorey(storey);
         assertEquals(2, building.getStoreys().size());
         assertEquals(building, storey.getBuilding());
+    }
+
+    @Test
+    public void testUpdateStorey() {
+        Building building = buildingRepository.findAll().get(0);
+        Storey storey = storeyRepository.findAll().get(0);
+        storey.setName("Storey Name2");
+        building.addStorey(storey);
+        assertEquals("Storey Name2", storey.getName());
     }
 
     @Test
@@ -192,6 +210,24 @@ public class IntegrationTests {
     }
 
     @Test
+    public void testUpdateSeat() {
+        Storey storey = storeyRepository.findAll().get(0);
+        Seat seat = seatRepository.findAll().get(0);
+        seat.setLine(3);
+        seat.setCol(3);
+        seat.setCreationDate(Instant.parse("2021-01-01T00:00:00Z"));
+        seat.setEndAvailabilityDate(Instant.parse("2021-01-01T00:00:00Z"));
+        seat.setSeatType("No Monitors");
+        storey.addSeat(seat);
+        assertEquals(5, storey.getSeats().size());
+        assertEquals(3, seat.getLine());
+        assertEquals(3, seat.getCol());
+        assertEquals(Instant.parse("2021-01-01T00:00:00Z"), seat.getCreationDate());
+        assertEquals(Instant.parse("2021-01-01T00:00:00Z"), seat.getEndAvailabilityDate());
+        assertEquals("No Monitors", seat.getSeatType());
+    }
+
+    @Test
     public void testRemoveSeat() {
         Storey storey = storeyRepository.findAll().get(0);
         Seat seat = seatRepository.findAll().get(0);
@@ -210,6 +246,22 @@ public class IntegrationTests {
         booking.setEmail("user5@gmail.com");
         seat.addBooking(booking);
         assertEquals(3, seat.getBookings().size());
+        assertEquals(seat, booking.getSeat());
+    }
+
+    @Test
+    public void testUpdateBooking() {
+        Seat seat = seatRepository.findAll().get(0);
+        Booking booking = bookingRepository.findAll().get(0);
+        booking.setDate(Instant.parse("2021-01-01T00:00:00Z"));
+        booking.setSeat(seat);
+        booking.setUserName("User Name5");
+        booking.setEmail("user5@gmail.com");
+        seat.addBooking(booking);
+        assertEquals(3, seat.getBookings().size());
+        assertEquals(Instant.parse("2021-01-01T00:00:00Z"), booking.getDate());
+        assertEquals("User Name5", booking.getUserName());
+        assertEquals("user5@gmail.com", booking.getEmail());
         assertEquals(seat, booking.getSeat());
     }
 
