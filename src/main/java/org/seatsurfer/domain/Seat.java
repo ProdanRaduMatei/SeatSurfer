@@ -38,7 +38,7 @@ public class Seat {
     @ManyToOne(fetch = FetchType.LAZY)
     private Storey storey;
 
-    @OneToMany(mappedBy = "seat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "seat", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 
     public void addBooking(Booking booking) {
