@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import org.seatsurfer.domain.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,7 +30,7 @@ public class Admin {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "admin", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Building> buildings = new ArrayList<>();
 
     public void addBuilding(Building building) {

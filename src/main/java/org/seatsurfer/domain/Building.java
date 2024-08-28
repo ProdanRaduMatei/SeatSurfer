@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class Building {
     @ManyToOne(fetch = FetchType.LAZY)
     private Admin admin;
 
-    @OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "building", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Storey> storeys = new ArrayList<>();
 
     public void addStorey(Storey storey) {
