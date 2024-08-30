@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.seatsurfer.domain.*;
 import org.seatsurfer.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.Instant;
@@ -14,11 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-public class IntegrationTests {
+class IntegrationTests {
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
@@ -155,22 +152,10 @@ public class IntegrationTests {
         building1.setStoreys(new ArrayList<>(List.of(storey1, storey2)));
         admin.setBuildings(new ArrayList<>(List.of(building1, building2)));
 
-        bookingRepository.save(booking1);
-        bookingRepository.save(booking2);
-        bookingRepository.save(booking3);
-        bookingRepository.save(booking4);
-        seatRepository.save(seat1);
-        seatRepository.save(seat2);
-        seatRepository.save(seat3);
-        seatRepository.save(seat4);
-        seatRepository.save(seat5);
-        seatRepository.save(seat6);
-        seatRepository.save(seat7);
-        seatRepository.save(seat8);
-        storeyRepository.save(storey1);
-        storeyRepository.save(storey2);
-        buildingRepository.save(building1);
-        buildingRepository.save(building2);
+        bookingRepository.saveAll(List.of(booking1, booking2, booking3, booking4));
+        seatRepository.saveAll(List.of(seat1, seat2, seat3, seat4, seat5, seat6, seat7, seat8));
+        storeyRepository.saveAll(List.of(storey1, storey2));
+        buildingRepository.saveAll(List.of(building1, building2));
         adminRepository.save(admin);
     }
 
@@ -184,7 +169,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testAddBuilding() {
+    void testAddBuilding() {
         Admin admin = adminRepository.findAll().get(0);
         Building building = new Building();
         building.setName("Building Name2");
@@ -194,7 +179,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testUpdateBuilding() {
+    void testUpdateBuilding() {
         Admin admin = adminRepository.findAll().get(0);
         final Building building = admin.getBuildings().get(0);
         building.setName("Building Name2");
@@ -205,7 +190,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testRemoveBuilding() {
+    void testRemoveBuilding() {
         Admin admin = adminRepository.findAll().get(0);
         Building building = buildingRepository.findAll().get(0);
         final int buildingInitialSize = buildingRepository.findAll().size();
@@ -220,7 +205,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testAddStorey() {
+    void testAddStorey() {
         Building building = buildingRepository.findAll().get(0);
         Storey storey = new Storey();
         storey.setName("Storey Name2");
@@ -230,7 +215,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testUpdateStorey() {
+    void testUpdateStorey() {
         Building building = buildingRepository.findAll().get(0);
         final Storey storey = building.getStoreys().get(0);
         storey.setName("Storey Name2");
@@ -241,7 +226,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testRemoveStorey() {
+    void testRemoveStorey() {
         Building building = buildingRepository.findAll().get(0);
         Storey storey = storeyRepository.findAll().get(0);
         final int storeyInitialSize = storeyRepository.findAll().size();
@@ -254,7 +239,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testAddSeat() {
+    void testAddSeat() {
         Storey storey = storeyRepository.findAll().get(0);
         Seat seat = new Seat();
         seat.setLine(3);
@@ -268,7 +253,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testUpdateSeat() {
+    void testUpdateSeat() {
         Storey storey = storeyRepository.findAll().get(0);
         final Seat seat = storey.getSeats().get(0);
         seat.setLine(3);
@@ -287,7 +272,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testRemoveSeat() {
+    void testRemoveSeat() {
         Storey storey = storeyRepository.findAll().get(0);
         Seat seat = seatRepository.findAll().get(0);
         final int seatInitialSize = seatRepository.findAll().size();
@@ -300,7 +285,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testAddBooking() {
+    void testAddBooking() {
         Seat seat = seatRepository.findAll().get(0);
         Booking booking = new Booking();
         booking.setDate(Instant.parse("2021-01-01T00:00:00Z"));
@@ -313,7 +298,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testUpdateBooking() {
+    void testUpdateBooking() {
         Seat seat = seatRepository.findAll().get(0);
         final Booking booking = seat.getBookings().get(0);
         booking.setDate(Instant.parse("2021-01-01T00:00:00Z"));
@@ -328,7 +313,7 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testRemoveBooking() {
+    void testRemoveBooking() {
         Seat seat = seatRepository.findAll().get(0);
         Booking booking = bookingRepository.findAll().get(0);
         final int bookingInitialSize = bookingRepository.findAll().size();
