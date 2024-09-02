@@ -1,10 +1,15 @@
 package org.seatsurfer.web;
 
+import org.seatsurfer.domain.Seat;
 import org.seatsurfer.service.BookingService;
+import org.seatsurfer.service.SeatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.seatsurfer.domain.Booking;
+import org.seatsurfer.persistence.SeatRepository;
+
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +18,9 @@ import java.util.Optional;
 public class BookingController {
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private SeatService seatService;
+
 
     @GetMapping
     public List<Booking> getAllBookings() {
@@ -40,5 +48,12 @@ public class BookingController {
     public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
         bookingService.deleteBooking(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping
+    public Booking bookSeat(@RequestBody Instant date, @RequestBody String userName, @RequestBody String email, @RequestBody Integer col, @RequestBody Integer line) {
+        Seat seat = seatService.getSeatByColAndLine(col, line);
+        Booking booking = new Booking(date, userName, email, seat);
+        return bookingService.createBooking(booking);
     }
 }

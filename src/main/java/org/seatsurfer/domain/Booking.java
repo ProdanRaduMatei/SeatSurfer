@@ -29,4 +29,11 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Seat seat;
+
+    public Booking(Instant date, String userName, String email, Seat seat) {
+        this.date = date;
+        this.userName = userName;
+        this.email = email;
+        this.seat = seat;
+    }
 }

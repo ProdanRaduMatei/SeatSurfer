@@ -40,4 +40,17 @@ public class SeatService {
     public void deleteSeat(Long id) {
         seatsRepository.deleteById(id);
     }
+
+    public List<Seat> getEmptySeats() {
+        List<Seat> seats = seatsRepository.findAll();
+        seats.removeIf(seat -> !seat.getBookings().isEmpty());
+        return seats;
+    }
+
+    public Seat getSeatByColAndLine(Integer col, Integer line) {
+        return seatsRepository.findAll().stream()
+                .filter(seat -> seat.getCol().equals(col) && seat.getLine().equals(line))
+                .findFirst()
+                .orElseThrow();
+    }
 }
