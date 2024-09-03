@@ -1,5 +1,6 @@
 package org.seatsurfer;
 
+import org.modelmapper.ModelMapper;
 import org.seatsurfer.domain.*;
 import org.seatsurfer.persistence.*;
 import org.springframework.boot.CommandLineRunner;
@@ -13,6 +14,11 @@ import java.util.List;
 
 @SpringBootApplication
 public class SeatSurferApplication {
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(SeatSurferApplication.class, args);
