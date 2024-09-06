@@ -6,10 +6,12 @@ import org.seatsurfer.domain.Storey;
 import org.seatsurfer.transfer.BookingDTO;
 import org.seatsurfer.transfer.SeatDTO;
 import org.seatsurfer.transfer.StoreyDTO;
+import org.springframework.context.annotation.Bean;
 
 import java.time.Instant;
+import java.util.List;
 
-public class EntityToDTOConverter {
+public class EntityDTOConverter {
 
     public static BookingDTO convertToBookingDTO(Booking booking) {
         return BookingDTO.builder()
@@ -53,6 +55,12 @@ public class EntityToDTOConverter {
         seat.setEndAvailabilityDate(Instant.parse(seatDTO.getEndAvailabilityDate()));
         seat.setStorey(convertToStoreyEntity(seatDTO.getStorey()));
         return seat;
+    }
+
+    public static List<SeatDTO> convertToSeatDTOList(List<Seat> seats) {
+        return seats.stream()
+                .map(EntityDTOConverter::convertToSeatDTO)
+                .toList();
     }
 
     public static StoreyDTO convertToStoreyDTO(Storey storey) {

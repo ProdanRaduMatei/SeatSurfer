@@ -5,6 +5,7 @@ import org.seatsurfer.persistence.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,10 +42,18 @@ public class SeatService {
         seatsRepository.deleteById(id);
     }
 
-    public List<Seat> getEmptySeats() {
-        List<Seat> seats = seatsRepository.findAll();
-        seats.removeIf(seat -> !seat.getBookings().isEmpty());
-        return seats;
+    public List<Seat> getEmptySeats(String storeyName, Instant date) {
+        return seatsRepository.findAll().stream()
+                .filter(seat -> seat.getStorey().getName().equals(storeyName))
+                .filter(seat -> seat.getBookings().stream().noneMatch(booking -> booking.getDate().equals(date)))
+                .toList();
+    }
+
+    public List<Seat> getBookedSeats(String storeyName, Instant date) {
+        return seatsRepository.findAll().stream()
+                .filter(seat -> seat.getStorey().getName().equals(storeyName))
+                .filter(seat -> seat.getBookings().stream().anyMatch(booking -> booking.getDate().equals(date)))
+                .toList();
     }
 
     public Seat getSeatByColAndLine(Integer col, Integer line) {

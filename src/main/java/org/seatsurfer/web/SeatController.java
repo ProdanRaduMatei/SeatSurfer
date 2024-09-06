@@ -2,9 +2,10 @@ package org.seatsurfer.web;
 
 import org.seatsurfer.domain.Seat;
 import org.seatsurfer.service.SeatService;
+import org.seatsurfer.transfer.UserNameBooking;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.Optional;
 public class SeatController {
     @Autowired
     private SeatService seatService;
+
+    private UserNameBooking userNameBooking;
 
     @GetMapping
     public List<Seat> getAllSeats() {
@@ -44,17 +47,8 @@ public class SeatController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/empty")
-    public List<Seat> getEmptySeats() {
-        return seatService.getEmptySeats();
-    }
-
     @GetMapping("/user")
     public String getUserNameBooking(@RequestBody Integer col, @RequestBody Integer line, @RequestBody Instant date) {
-        Seat seat = seatService.getSeatByColAndLine(col, line);
-        if (seat.getBookings().stream().noneMatch(booking -> booking.getDate().equals(date))) {
-            return "No booking found";
-        }
-        return seat.getBookings().get(0).getUserName();
+        return userNameBooking.getUserName(col, line, date);
     }
 }
