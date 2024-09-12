@@ -2,6 +2,9 @@ package org.seatsurfer.web;
 
 import org.seatsurfer.domain.Seat;
 import org.seatsurfer.service.SeatService;
+import org.seatsurfer.transfer.BookedSeats;
+import org.seatsurfer.transfer.EmptySeats;
+import org.seatsurfer.transfer.SeatDTO;
 import org.seatsurfer.transfer.UserNameBooking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +20,8 @@ public class SeatController {
     @Autowired
     private SeatService seatService;
 
-    private UserNameBooking userNameBooking;
+    private EmptySeats emptySeatsRequest;
+    private BookedSeats bookedSeatsRequest;
 
     @GetMapping
     public List<Seat> getAllSeats() {
@@ -47,8 +51,28 @@ public class SeatController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user")
-    public String getUserNameBooking(@RequestBody Integer col, @RequestBody Integer line, @RequestBody Instant date) {
-        return userNameBooking.getUserName(col, line, date);
+    @GetMapping("/empty")
+    public List<SeatDTO> getEmptySeats(@RequestParam String storeyName, @RequestParam String date) {
+        return emptySeatsRequest.getEmptySeats(storeyName, date);
+    }
+
+    @GetMapping("/booked")
+    public List<SeatDTO> getBookedSeats(@RequestBody String storeyName, @RequestBody String date) {
+        return bookedSeatsRequest.getBookedSeats(storeyName, date);
+    }
+
+    @GetMapping("/nrOfBookedSeats")
+    public Integer getNrOfBookedSeats(@RequestBody String storeyName, @RequestBody String date) {
+        return bookedSeatsRequest.getBookedSeats(storeyName, date).size();
+    }
+
+    @GetMapping("/nrOfEmptySeats")
+    public Integer getNrOfEmptySeats(@RequestParam String storeyName, @RequestParam String date) {
+        return emptySeatsRequest.getEmptySeats(storeyName, date).size();
+    }
+
+    @GetMapping("/nrOfSeats")
+    public Integer getNrOfSeats(@RequestParam String storeyName, @RequestParam String date) {
+        return emptySeatsRequest.getEmptySeats(storeyName, date).size() + bookedSeatsRequest.getBookedSeats(storeyName, date).size();
     }
 }

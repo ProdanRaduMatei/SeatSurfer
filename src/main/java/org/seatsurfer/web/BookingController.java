@@ -3,6 +3,7 @@ package org.seatsurfer.web;
 import org.seatsurfer.domain.Seat;
 import org.seatsurfer.service.BookingService;
 import org.seatsurfer.service.SeatService;
+import org.seatsurfer.transfer.UserNameBooking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class BookingController {
     @Autowired
     private SeatService seatService;
 
+    private UserNameBooking userNameBooking;
 
     @GetMapping
     public List<Booking> getAllBookings() {
@@ -55,5 +57,10 @@ public class BookingController {
         Seat seat = seatService.getSeatByColAndLine(col, line);
         Booking booking = new Booking(date, userName, email, seat);
         return bookingService.createBooking(booking);
+    }
+
+    @GetMapping("/user")
+    public String getUserNameBooking(@RequestBody Integer col, @RequestBody Integer line, @RequestBody Instant date) {
+        return userNameBooking.getUserName(col, line, date);
     }
 }

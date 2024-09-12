@@ -17,9 +17,6 @@ public class StoreyController {
     @Autowired
     private StoreyService storeyService;
 
-    private EmptySeats emptySeatsRequest;
-    private BookedSeats bookedSeatsRequest;
-
     @GetMapping
     public List<Storey> getAllStoreys() {
         return storeyService.getAllStoreys();
@@ -46,15 +43,5 @@ public class StoreyController {
     public ResponseEntity<Void> deleteStorey(@PathVariable Long id) {
         storeyService.deleteStorey(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/empty")
-    public List<SeatDTO> getEmptySeats(@RequestParam String storeyName, @RequestParam String date) {
-        return emptySeatsRequest.getEmptySeats(storeyName, date);
-    }
-
-    @GetMapping("/booked")
-    public List<SeatDTO> getBookedSeats(@RequestBody String storeyName, @RequestBody String date) {
-        return bookedSeatsRequest.getBookedSeats(storeyName, date);
     }
 }
