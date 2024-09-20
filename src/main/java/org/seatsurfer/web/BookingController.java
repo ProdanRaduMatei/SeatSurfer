@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.seatsurfer.domain.Booking;
-import org.seatsurfer.persistence.SeatRepository;
 
 import java.time.Instant;
 import java.util.List;
@@ -35,7 +34,7 @@ public class BookingController {
         return booking.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public Booking createBooking(@RequestBody Booking booking) {
         return bookingService.createBooking(booking);
     }
@@ -52,7 +51,7 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping
+    @PostMapping("/book")
     public Booking bookSeat(@RequestBody Instant date, @RequestBody String userName, @RequestBody String email, @RequestBody Integer col, @RequestBody Integer line) {
         Seat seat = seatService.getSeatByColAndLine(col, line);
         Booking booking = new Booking(date, userName, email, seat);

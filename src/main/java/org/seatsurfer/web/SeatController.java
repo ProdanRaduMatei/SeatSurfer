@@ -5,12 +5,10 @@ import org.seatsurfer.service.SeatService;
 import org.seatsurfer.transfer.BookedSeats;
 import org.seatsurfer.transfer.EmptySeats;
 import org.seatsurfer.transfer.SeatDTO;
-import org.seatsurfer.transfer.UserNameBooking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +18,10 @@ public class SeatController {
     @Autowired
     private SeatService seatService;
 
+    @Autowired
     private EmptySeats emptySeatsRequest;
+
+    @Autowired
     private BookedSeats bookedSeatsRequest;
 
     @GetMapping
@@ -52,8 +53,19 @@ public class SeatController {
     }
 
     @GetMapping("/empty")
-    public List<SeatDTO> getEmptySeats(@RequestParam String storeyName, @RequestParam String date) {
-        return emptySeatsRequest.getEmptySeats(storeyName, date);
+    public int[][] getEmptySeats(@RequestParam String storeyName, @RequestParam String date) {
+        List<SeatDTO> emptySeats = emptySeatsRequest.getEmptySeats(storeyName, date);
+        int[][] seatMatrix = new int[24][24];
+
+        for (SeatDTO seat : emptySeats) {
+            int col = seat.getCol();
+            int line = seat.getLine();
+            if (col >= 0 && col < 24 && line >= 0 && line < 24) {
+                seatMatrix[col][line] = 1;
+            }
+        }
+
+        return seatMatrix;
     }
 
     @GetMapping("/booked")
