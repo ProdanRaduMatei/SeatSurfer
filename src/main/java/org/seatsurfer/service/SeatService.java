@@ -42,6 +42,12 @@ public class SeatService {
         seatsRepository.deleteById(id);
     }
 
+    public List<Seat> getAllSeats(String storeyName, Instant date) {
+        return seatsRepository.findAll().stream()
+                .filter(seat -> seat.getStorey().getName().equals(storeyName))
+                .toList();
+    }
+
     public List<Seat> getEmptySeats(String storeyName, Instant date) {
         return seatsRepository.findAll().stream()
                 .filter(seat -> seat.getStorey().getName().equals(storeyName))

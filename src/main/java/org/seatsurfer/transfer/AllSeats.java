@@ -11,13 +11,13 @@ import java.time.Instant;
 import java.util.List;
 
 @Component
-public class BookedSeats {
+public class AllSeats {
     @Autowired
     private SeatService seatService;
 
-    public List<SeatDTO> getBookedSeats(@RequestParam String storeyName, @RequestParam String date) {
+    public List<SeatDTO> getAllSeats(@RequestParam String storeyName, @RequestParam String date) {
         Instant dateInstant = Instant.parse(date);
-        List<Seat> bookedSeats = seatService.getBookedSeats(storeyName, dateInstant);
-        return EntityDTOConverter.convertToSeatDTOList(bookedSeats);
+        List<Seat> allSeats = seatService.getAllSeats(storeyName, dateInstant);
+        return EntityDTOConverter.convertToSeatDTOList(allSeats);
     }
 }

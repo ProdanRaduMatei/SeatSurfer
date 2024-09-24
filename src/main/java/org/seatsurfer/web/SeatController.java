@@ -2,6 +2,7 @@ package org.seatsurfer.web;
 
 import org.seatsurfer.domain.Seat;
 import org.seatsurfer.service.SeatService;
+import org.seatsurfer.transfer.AllSeats;
 import org.seatsurfer.transfer.BookedSeats;
 import org.seatsurfer.transfer.EmptySeats;
 import org.seatsurfer.transfer.SeatDTO;
@@ -23,6 +24,9 @@ public class SeatController {
 
     @Autowired
     private BookedSeats bookedSeatsRequest;
+
+    @Autowired
+    private AllSeats allSeatsRequest;
 
     @GetMapping
     public List<Seat> getAllSeats() {
@@ -52,6 +56,31 @@ public class SeatController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/all")
+    public int[][] getAllSeats(@RequestParam String storeyName, @RequestParam String date) {
+        List<SeatDTO> allSeats = allSeatsRequest.getAllSeats(storeyName, date);
+        List<SeatDTO> bookedSeats = bookedSeatsRequest.getBookedSeats(storeyName, date);
+        int[][] seatMatrix = new int[24][24];
+
+        for (SeatDTO seat : allSeats) {
+            int col = seat.getCol();
+            int line = seat.getLine();
+            if (col >= 0 && col < 24 && line >= 0 && line < 24) {
+                seatMatrix[col][line] = 1; // Default to empty
+            }
+        }
+
+        for (SeatDTO seat : bookedSeats) {
+            int col = seat.getCol();
+            int line = seat.getLine();
+            if (col >= 0 && col < 24 && line >= 0 && line < 24) {
+                seatMatrix[col][line] = 2; // Mark as occupied
+            }
+        }
+
+        return seatMatrix;
+    }
+
     @GetMapping("/empty")
     public int[][] getEmptySeats(@RequestParam String storeyName, @RequestParam String date) {
         List<SeatDTO> emptySeats = emptySeatsRequest.getEmptySeats(storeyName, date);
@@ -69,8 +98,19 @@ public class SeatController {
     }
 
     @GetMapping("/booked")
-    public List<SeatDTO> getBookedSeats(@RequestBody String storeyName, @RequestBody String date) {
-        return bookedSeatsRequest.getBookedSeats(storeyName, date);
+    public int[][] getBookedSeats(@RequestParam String storeyName, @RequestParam String date) {
+        List<SeatDTO> bookedSeats = bookedSeatsRequest.getBookedSeats(storeyName, date);
+        int[][] seatMatrix = new int[24][24];
+
+        for (SeatDTO seat : bookedSeats) {
+            int col = seat.getCol();
+            int line = seat.getLine();
+            if (col >= 0 && col < 24 && line >= 0 && line < 24) {
+                seatMatrix[col][line] = 2; // Mark as occupied
+            }
+        }
+
+        return seatMatrix;
     }
 
     @GetMapping("/nrOfBookedSeats")
