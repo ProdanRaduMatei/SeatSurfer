@@ -28,6 +28,28 @@ public class BookingController {
         return bookingService.getAllBookings();
     }
 
+    //Endpoint to check seat availability
+    @GetMapping("/check-availability")
+    public ResponseEntity<Boolean> checkAvailability(@RequestParam Long seatId, @RequestParam String date) {
+        Instant bookingDate = Instant.parse(date);
+        boolean isAvailable = bookingService.isSeatAvailable(seatId, bookingDate);
+        return ResponseEntity.ok(isAvailable);
+    }
+
+    //Endpoint to reserve a seat (temporarily holds the seat for user confirmation)
+    @PostMapping("/reserve")
+    public ResponseEntity<String> reserveSeat(@RequestBody Booking booking) {
+        boolean isReserved = bookingService.reserveSeat(booking);
+        return isReserved ? ResponseEntity.ok("Seat reserved successfully.") : ResponseEntity.badRequest().body("Seat is already booked.");
+    }
+
+    //Endpoint to confirm the booking
+    @PostMapping("/confirm")
+    public ResponseEntity<String> confirmBooking(@RequestBody Long bookingId) {
+        boolean isConfirmed = bookingService.confirmBooking(bookingId);
+        return isConfirmed ? ResponseEntity.ok("Booking confirmed.") : ResponseEntity.badRequest().body("Failed to confirm booking.");
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
         Optional<Booking> booking = bookingService.getBookingById(id);
