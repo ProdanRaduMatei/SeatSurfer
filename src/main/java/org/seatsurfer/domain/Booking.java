@@ -27,6 +27,9 @@ public class Booking {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "confirmed", nullable = false)
+    private boolean confirmed;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Seat seat;
 

@@ -5,6 +5,7 @@ import org.seatsurfer.persistence.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,5 +38,29 @@ public class BookingService {
 
     public void deleteBooking(Long id) {
         bookingRepository.deleteById(id);
+    }
+
+    //Check if the seat is available for a given date
+    public boolean isSeatAvailable(Long seatId, Instant date) {
+        return bookingRepository.findBySeatIdAndDate(seatId, date).isEmpty();
+    }
+
+    //Temporarily reserve a seat (status remains unconfrimed)
+    public boolean reserveSeat(Booking booking) {
+        if (isSeatAvailable(booking.getSeat().getId(), booking.getDate())) {
+            booking.setConfirmed(false);
+            bookingRepository.save(booking);
+            return true;
+        }
+        return false;
+    }
+
+    //Confirm the booking
+    public boolean confirmBooking(Long bookingId) {
+        return bookingRepository.findById(bookingId).map(booking -> {
+            booking.setConfirmed(true);
+            bookingRepository.save(booking);
+            return true;
+        }).orElse(false);
     }
 }
