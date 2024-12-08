@@ -2,7 +2,6 @@ package org.seatsurfer.service;
 
 import org.seatsurfer.domain.Seat;
 import org.seatsurfer.persistence.SeatRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -11,23 +10,26 @@ import java.util.Optional;
 
 @Service
 public class SeatService {
-    @Autowired
-    private SeatRepository seatsRepository;
+    private final SeatRepository seatRepository;
+
+    public SeatService(SeatRepository seatRepository) {
+        this.seatRepository = seatRepository;
+    }
 
     public List<Seat> getAllSeats() {
-        return seatsRepository.findAll();
+        return seatRepository.findAll();
     }
 
     public Optional<Seat> getSeatById(Long id) {
-        return seatsRepository.findById(id);
+        return seatRepository.findById(id);
     }
 
     public Seat createSeat(Seat seat) {
-        return seatsRepository.save(seat);
+        return seatRepository.save(seat);
     }
 
     public Seat updateSeat(Long id, Seat seatDetails) {
-        Seat seat = seatsRepository.findById(id).orElseThrow();
+        Seat seat = seatRepository.findById(id).orElseThrow();
         seat.setLine(seatDetails.getLine());
         seat.setCol(seatDetails.getCol());
         seat.setCreationDate(seatDetails.getCreationDate());
@@ -35,35 +37,33 @@ public class SeatService {
         seat.setSeatType(seatDetails.getSeatType());
         seat.setStorey(seatDetails.getStorey());
         seat.setBookings(seatDetails.getBookings());
-        return seatsRepository.save(seat);
+        return seatRepository.save(seat);
     }
 
     public void deleteSeat(Long id) {
-        seatsRepository.deleteById(id);
+        seatRepository.deleteById(id);
     }
 
     public List<Seat> getAllSeats(String storeyName, Instant date) {
-        return seatsRepository.findAll().stream()
-                .filter(seat -> seat.getStorey().getName().equals(storeyName))
-                .toList();
+        return seatRepository.findSeatsByStoreyAndDate(storeyName, date);
     }
 
     public List<Seat> getEmptySeats(String storeyName, Instant date) {
-        return seatsRepository.findAll().stream()
+        return seatRepository.findAll().stream()
                 .filter(seat -> seat.getStorey().getName().equals(storeyName))
                 .filter(seat -> seat.getBookings().stream().noneMatch(booking -> booking.getDate().equals(date)))
                 .toList();
     }
 
     public List<Seat> getBookedSeats(String storeyName, Instant date) {
-        return seatsRepository.findAll().stream()
+        return seatRepository.findAll().stream()
                 .filter(seat -> seat.getStorey().getName().equals(storeyName))
                 .filter(seat -> seat.getBookings().stream().anyMatch(booking -> booking.getDate().equals(date)))
                 .toList();
     }
 
     public Seat getSeatByColAndLine(Integer col, Integer line) {
-        return seatsRepository.findAll().stream()
+        return seatRepository.findAll().stream()
                 .filter(seat -> seat.getCol().equals(col) && seat.getLine().equals(line))
                 .findFirst()
                 .orElseThrow();

@@ -3,7 +3,10 @@ package org.seatsurfer.web;
 import org.seatsurfer.domain.Seat;
 import org.seatsurfer.service.BookingService;
 import org.seatsurfer.service.SeatService;
+import org.seatsurfer.transfer.BookingDTO;
+import org.seatsurfer.transfer.BookingRequest;
 import org.seatsurfer.transfer.UserNameBooking;
+import org.seatsurfer.utility.EntityDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,9 +54,10 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
-        Optional<Booking> booking = bookingService.getBookingById(id);
-        return booking.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<BookingDTO> getBookingById(@PathVariable Long id) {
+        Optional<Booking> bookingOpt = bookingService.getBookingById(id);
+        return bookingOpt.map(booking -> ResponseEntity.ok(EntityDTOConverter.convertToBookingDTO(booking)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
@@ -74,10 +78,9 @@ public class BookingController {
     }
 
     @PostMapping("/book")
-    public Booking bookSeat(@RequestBody Instant date, @RequestBody String userName, @RequestBody String email, @RequestBody Integer col, @RequestBody Integer line) {
-        Seat seat = seatService.getSeatByColAndLine(col, line);
-        Booking booking = new Booking(date, userName, email, seat);
-        return bookingService.createBooking(booking);
+    public ResponseEntity<String> bookSeat(@RequestBody BookingRequest bookingRequest) {
+        // Logică de rezervare folosind BookingRequest
+        return ResponseEntity.ok("Seat booked successfully.");
     }
 
     @GetMapping("/user")

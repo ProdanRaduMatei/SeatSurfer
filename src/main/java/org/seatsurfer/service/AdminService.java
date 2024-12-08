@@ -13,8 +13,11 @@ import java.util.Optional;
 
 @Service
 public class AdminService {
-    @Autowired
-    private AdminRepository adminRepository;
+    private final AdminRepository adminRepository;
+
+    public AdminService(AdminRepository adminRepository) {
+        this.adminRepository = adminRepository;
+    }
 
     public List<Admin> getAllAdmins() {
         return adminRepository.findAll();
@@ -41,7 +44,7 @@ public class AdminService {
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Admin admin = adminRepository.findByUsername(username)
+        Admin admin = adminRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Admin not found with username: " + username));
         return new CustomUserDetails(admin);
     }

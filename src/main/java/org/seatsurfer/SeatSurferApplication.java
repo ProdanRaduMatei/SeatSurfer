@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,14 +26,14 @@ public class SeatSurferApplication {
     }
 
 //    @Bean
-//    CommandLineRunner commandLineRunner(AdminRepository adminRepository, BuildingRepository buildingRepository, StoreyRepository storeyRepository, SeatRepository seatRepository, BookingRepository bookingRepository) {
+//    CommandLineRunner commandLineRunner(AdminRepository adminRepository, BuildingRepository buildingRepository, StoreyRepository storeyRepository, SeatRepository seatRepository, BookingRepository bookingRepository, PasswordEncoder passwordEncoder) {
 //        return args -> {
 //            //admin
 //            Admin admin = new Admin();
 //            admin.setId(1L);
 //            admin.setName("Admin Name");
 //            admin.setEmail("admin@gmail.com");
-//            admin.setPassword("password");
+//            admin.setPassword(passwordEncoder.encode("admin"));
 //
 //            //buildings
 //            Building building1 = new Building();
@@ -132,28 +133,28 @@ public class SeatSurferApplication {
 //            //bookings
 //            Booking booking1 = new Booking();
 //            booking1.setId(1L);
-//            booking1.setDate(Instant.parse("2024-09-27T00:00:00Z"));
+//            booking1.setDate(Instant.parse("2024-12-11T00:00:00Z"));
 //            booking1.setSeat(seat1);
 //            booking1.setUserName("User Name1");
 //            booking1.setEmail("user1@gmail.com");
 //
 //            Booking booking2 = new Booking();
 //            booking2.setId(2L);
-//            booking2.setDate(Instant.parse("2024-09-27T00:00:00Z"));
+//            booking2.setDate(Instant.parse("2024-12-11T00:00:00Z"));
 //            booking2.setSeat(seat2);
 //            booking2.setUserName("User Name2");
 //            booking2.setEmail("user2@gmail.com");
 //
 //            Booking booking3 = new Booking();
 //            booking3.setId(3L);
-//            booking3.setDate(Instant.parse("2024-09-27T00:00:00Z"));
+//            booking3.setDate(Instant.parse("2024-12-11T00:00:00Z"));
 //            booking3.setSeat(seat3);
 //            booking3.setUserName("User Name3");
 //            booking3.setEmail("user3@gmail.com");
 //
 //            Booking booking4 = new Booking();
 //            booking4.setId(4L);
-//            booking4.setDate(Instant.parse("2024-09-27T00:00:00Z"));
+//            booking4.setDate(Instant.parse("2024-12-11T00:00:00Z"));
 //            booking4.setSeat(seat1);
 //            booking4.setUserName("User Name4");
 //            booking4.setEmail("user4@gmail.com");

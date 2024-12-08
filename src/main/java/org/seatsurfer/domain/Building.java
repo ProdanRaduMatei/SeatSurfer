@@ -4,14 +4,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString(exclude = "admin") // Exclude admin to prevent circular reference
 @Entity
 @Table(name = "buildings")
 public class Building {

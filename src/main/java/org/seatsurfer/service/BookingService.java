@@ -11,8 +11,11 @@ import java.util.Optional;
 
 @Service
 public class BookingService {
-    @Autowired
-    private BookingRepository bookingRepository;
+    private final BookingRepository bookingRepository;
+
+    public BookingService(BookingRepository bookingRepository) {
+        this.bookingRepository = bookingRepository;
+    }
 
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();

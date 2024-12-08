@@ -10,8 +10,11 @@ import java.util.Optional;
 
 @Service
 public class BuildingService {
-    @Autowired
-    private BuildingRepository buildingRepository;
+    private final BuildingRepository buildingRepository;
+
+    public BuildingService(BuildingRepository buildingRepository) {
+        this.buildingRepository = buildingRepository;
+    }
 
     public List<Building> getAllBuildings() {
         return buildingRepository.findAll();
