@@ -7,17 +7,20 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
 public class BookingDTO {
     private Long id;
+    private String date;
+    private boolean confirmed;
     private String userName;
     private String email;
-    private SeatDTO seat;
-    private String date;
+    private SeatDTO seatDTO;
 
+    // sau, dacă preferi un sub-DTO:
+    // private UserDTO user;
     public Instant getBookingDateConverted(String date) {
         return Instant.parse(date);
     }
@@ -33,4 +36,6 @@ public class BookingDTO {
     public Instant getBookingDate() {
         return Instant.parse(date);
     }
+
+    public SeatDTO getSeatDTO() { return seatDTO; }
 }

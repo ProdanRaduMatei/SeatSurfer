@@ -1,20 +1,61 @@
 package org.seatsurfer.service;
 
 import org.seatsurfer.domain.Booking;
+import org.seatsurfer.domain.Seat;
+import org.seatsurfer.domain.User;
 import org.seatsurfer.persistence.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import org.seatsurfer.service.SeatService;
+import org.seatsurfer.service.UserService;
 
 @Service
 public class BookingService {
     private final BookingRepository bookingRepository;
+    private final SeatService seatService;
+    private final UserService userService;
 
-    public BookingService(BookingRepository bookingRepository) {
+    @Autowired
+    public BookingService(BookingRepository bookingRepository,
+                          UserService userService,
+                          SeatService seatService) {
         this.bookingRepository = bookingRepository;
+        this.userService = userService;
+        this.seatService = seatService;
+    }
+
+    public boolean bookSeat(Long userId, Long seatId, Instant date) {
+        // 1. Ia user-ul
+        User user = userService.getUserById(userId).orElse(null);
+        if (user == null) {
+            return false; // sau arunci excepție
+        }
+
+        // 2. Ia seat-ul
+        Seat seat = seatService.getSeatById(seatId).orElse(null);
+        if (seat == null) {
+            return false; // sau excepție
+        }
+
+        // 3. Verifică dacă locul e deja ocupat la data respectivă
+        if (!isSeatAvailable(seatId, date)) {
+            return false;
+        }
+
+        // 4. Creează booking-ul
+        Booking booking = new Booking();
+        booking.setDate(date);
+        booking.setConfirmed(false);  // sau cum vrei tu
+        booking.setUser(user);
+        booking.setSeat(seat);
+
+        // 5. Salvează în BD
+        bookingRepository.save(booking);
+
+        return true;
     }
 
     public List<Booking> getAllBookings() {
@@ -34,8 +75,8 @@ public class BookingService {
         booking.setSeat(bookingDetails.getSeat());
         booking.setDate(bookingDetails.getDate());
         booking.setSeat(bookingDetails.getSeat());
-        booking.setUserName(bookingDetails.getUserName());
-        booking.setEmail(bookingDetails.getEmail());
+        booking.setUser(bookingDetails.getUser());
+        booking.setConfirmed(bookingDetails.isConfirmed());
         return bookingRepository.save(booking);
     }
 

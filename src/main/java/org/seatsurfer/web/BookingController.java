@@ -79,8 +79,19 @@ public class BookingController {
 
     @PostMapping("/book")
     public ResponseEntity<String> bookSeat(@RequestBody BookingRequest bookingRequest) {
-        // Logică de rezervare folosind BookingRequest
-        return ResponseEntity.ok("Seat booked successfully.");
+        // 1. Parsez data
+        Instant bookingDate = Instant.parse(bookingRequest.getDate());
+
+        // 2. Apelez serviciul care gestionează booking-ul
+        boolean success = bookingService.bookSeat(bookingRequest.getUserId(),
+                bookingRequest.getSeatId(),
+                bookingDate);
+
+        if (success) {
+            return ResponseEntity.ok("Seat booked successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Could not book the seat (already booked or user not found?).");
+        }
     }
 
     @GetMapping("/user")

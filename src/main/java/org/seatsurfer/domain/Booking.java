@@ -21,22 +21,21 @@ public class Booking {
     @Column(name = "date", nullable = false)
     private Instant date;
 
-    @Column(name = "user_name", nullable = false)
-    private String userName;
-
-    @Column(name = "email", nullable = false)
-    private String email;
-
     @Column(name = "confirmed", nullable = false)
     private boolean confirmed;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;   // referință la entitatea User
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seat_id")
     private Seat seat;
 
-    public Booking(Instant date, String userName, String email, Seat seat) {
+    // Constructor util
+    public Booking(Instant date, User user, Seat seat) {
         this.date = date;
-        this.userName = userName;
-        this.email = email;
+        this.user = user;
         this.seat = seat;
     }
 }

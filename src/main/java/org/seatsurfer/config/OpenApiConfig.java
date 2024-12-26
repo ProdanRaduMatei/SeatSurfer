@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
                 description = "API for seat booking"
         )
 )
-public class SwaggerConfig {
-    // Pentru Springdoc OpenAPI Starter, nu mai avem nevoie de Docket sau @EnableOpenApi.
-    // Springdoc va scana automat pachetul 'org.seatsurfer.web' și va genera documentația.
+public class OpenApiConfig {
+    // poți adăuga aici și alte configurări speciale de OpenAPI
 }

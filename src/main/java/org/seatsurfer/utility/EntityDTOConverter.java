@@ -3,6 +3,7 @@ package org.seatsurfer.utility;
 import org.seatsurfer.domain.Booking;
 import org.seatsurfer.domain.Seat;
 import org.seatsurfer.domain.Storey;
+import org.seatsurfer.domain.User;
 import org.seatsurfer.transfer.BookingDTO;
 import org.seatsurfer.transfer.SeatDTO;
 import org.seatsurfer.transfer.StoreyDTO;
@@ -14,22 +15,44 @@ import java.util.List;
 public class EntityDTOConverter {
 
     public static BookingDTO convertToBookingDTO(Booking booking) {
-        return BookingDTO.builder()
-                .id(booking.getId())
-                .userName(booking.getUserName())
-                .email(booking.getEmail())
-                .seat(convertToSeatDTO(booking.getSeat()))
-                .date(booking.getDate().toString())
-                .build();
+        BookingDTO dto = new BookingDTO();
+        dto.setId(booking.getId());
+        dto.setDate(booking.getDate().toString());
+
+        // Acum booking.user e un obiect user
+        if (booking.getUser() != null) {
+            dto.setUserName(booking.getUser().getName());
+            dto.setEmail(booking.getUser().getEmail());
+        }
+
+        // seat, etc.
+        return dto;
     }
 
     public static Booking convertToBookingEntity(BookingDTO bookingDTO) {
         Booking booking = new Booking();
         booking.setId(bookingDTO.getId());
-        booking.setUserName(bookingDTO.getUserName());
-        booking.setEmail(bookingDTO.getEmail());
-        booking.setSeat(convertToSeatEntity(bookingDTO.getSeat()));
-        booking.setDate(Instant.parse(bookingDTO.getDate()));
+
+        // În loc de booking.setUserName(...) și booking.setEmail(...):
+        // Creăm un user pe care-l atașăm la booking (dacă așa e noua logică):
+        if (bookingDTO.getUserName() != null || bookingDTO.getEmail() != null) {
+            User user = new User();
+            user.setName(bookingDTO.getUserName());   // userName provenit din DTO
+            user.setEmail(bookingDTO.getEmail());     // email provenit din DTO
+            booking.setUser(user);
+        }
+
+        // Dacă BookingDTO nu mai are .getSeat(), verifică cum se numește câmpul
+        // Poate e seatDTO, poate e altceva. De ex.:
+        if (bookingDTO.getSeatDTO() != null) {
+            booking.setSeat(convertToSeatEntity(bookingDTO.getSeatDTO()));
+        }
+
+        // Parsează data doar dacă există un string valid
+        if (bookingDTO.getDate() != null) {
+            booking.setDate(Instant.parse(bookingDTO.getDate()));
+        }
+
         return booking;
     }
 
