@@ -27,7 +27,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private AdminService adminService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain)
             throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
@@ -35,23 +37,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwt = null;
 
-        // Check if the Authorization header contains a JWT token
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7); // Remove "Bearer " prefix
+            jwt = authorizationHeader.substring(7); // eliminăm "Bearer "
             username = jwtUtil.extractUsername(jwt);
         }
 
-        // Validate the token and set authentication in the security context
+        // Dacă avem un username din JWT și SecurityContext e gol
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = adminService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
 
-                // Set the authentication in the context so the user is authenticated
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                // Setăm autentificarea
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 

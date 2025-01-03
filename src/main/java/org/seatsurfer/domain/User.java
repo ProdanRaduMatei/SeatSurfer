@@ -25,6 +25,9 @@ public class User {
     @Column(name = "email", nullable = false, unique = true)
     private String email; // exemplu: "john.doe@gmail.com"
 
+    @Column(name = "role", nullable = false)
+    private String role;
+
     // Relație 1 - n: un user poate avea mai multe booking-uri
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();

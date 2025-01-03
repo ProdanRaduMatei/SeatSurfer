@@ -18,7 +18,8 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        // Folosim "ROLE_" + admin.getRole() => ex. "ROLE_ADMIN", "ROLE_USER"
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + admin.getRole()));
     }
 
     @Override
@@ -28,7 +29,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return admin.getName();
+        return admin.getName();  // name e unique
     }
 
     @Override
@@ -49,5 +50,9 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getRole() {
+        return admin.getRole();  // convenient
     }
 }

@@ -4,20 +4,17 @@ import org.seatsurfer.domain.Admin;
 import org.seatsurfer.persistence.AdminRepository;
 import org.seatsurfer.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AdminService {
-    private final AdminRepository adminRepository;
+public class AdminService implements UserDetailsService {
 
-    public AdminService(AdminRepository adminRepository) {
-        this.adminRepository = adminRepository;
-    }
+    @Autowired
+    private AdminRepository adminRepository;
 
     public List<Admin> getAllAdmins() {
         return adminRepository.findAll();
@@ -28,6 +25,8 @@ public class AdminService {
     }
 
     public Admin createAdmin(Admin admin) {
+        // optional: criptează parola înainte de salvare
+        // admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         return adminRepository.save(admin);
     }
 
@@ -36,6 +35,7 @@ public class AdminService {
         admin.setName(adminDetails.getName());
         admin.setEmail(adminDetails.getEmail());
         admin.setPassword(adminDetails.getPassword());
+        admin.setRole(adminDetails.getRole());
         return adminRepository.save(admin);
     }
 
@@ -43,9 +43,16 @@ public class AdminService {
         adminRepository.deleteById(id);
     }
 
+    // *** Metoda cheie pentru Spring Security
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Admin admin = adminRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Admin not found with username: " + username));
         return new CustomUserDetails(admin);
+    }
+
+    public Admin getAdminByUsername(String username) {
+        return adminRepository.findByName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Admin not found: " + username));
     }
 }
