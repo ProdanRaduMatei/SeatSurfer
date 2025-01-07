@@ -10,8 +10,11 @@ import java.util.Optional;
 
 @Service
 public class StoreyService {
-    @Autowired
-    private StoreyRepository storeyRepository;
+    private final StoreyRepository storeyRepository;
+
+    public StoreyService(StoreyRepository storeyRepository) {
+        this.storeyRepository = storeyRepository;
+    }
 
     public List<Storey> getAllStoreys() {
         return storeyRepository.findAll();
