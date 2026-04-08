@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeatSurfer</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23174c43'/%3E%3Ccircle cx='32' cy='24' r='12' fill='%2386b840'/%3E%3Crect x='16' y='38' width='32' height='10' rx='5' fill='%23f4f1e9'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/styles.css">
+</head>
+<body>
+<div class="page-shell">
+    <header class="hero">
+        <div class="hero-copy">
+            <p class="eyebrow">Office booking, reconfiguration, and reporting</p>
+            <h1>SeatSurfer</h1>
+            <p class="hero-text">
+                A browser-first desk booking platform for teams behind the VPN. Reserve a desk in seconds,
+                inspect live occupancy, and let admins reshape floors without breaking the workflow.
+            </p>
+            <div class="hero-actions">
+                <button class="ghost-button" data-scroll-target="booking-section">Reserve a seat</button>
+                <button class="ghost-button" data-scroll-target="admin-section">Admin console</button>
+            </div>
+        </div>
+        <div class="hero-metrics">
+            <article class="metric-card">
+                <span class="metric-label">Live availability</span>
+                <strong id="heroAvailability">0 seats</strong>
+                <p>Real-time availability on the selected date.</p>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">Current load</span>
+                <strong id="heroLoad">0%</strong>
+                <p>Average occupancy across active floors.</p>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">API target</span>
+                <strong id="heroApiTarget">local</strong>
+                <p>Detected backend endpoint for this deployment.</p>
+            </article>
+        </div>
+    </header>
+
+    <main>
+        <section class="panel" id="booking-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Regular user flow</p>
+                    <h2>Reserve, inspect, and release seats</h2>
+                </div>
+                <div class="inline-note" id="publicMessage">Choose a date and your name to start.</div>
+            </div>
+
+            <div class="controls-grid">
+                <label class="field">
+                    <span>Booking date</span>
+                    <input type="date" id="bookingDate">
+                </label>
+                <label class="field">
+                    <span>Your name</span>
+                    <input type="text" id="viewerName" placeholder="Ion Popescu">
+                </label>
+                <button class="primary-button align-end" id="refreshPublicButton">Refresh floor map</button>
+            </div>
+
+            <div class="floor-card-grid" id="publicFloorCards"></div>
+
+            <div class="workspace-grid">
+                <article class="content-card">
+                    <div class="card-heading">
+                        <div>
+                            <p class="eyebrow">Seat map</p>
+                            <h3 id="mapTitle">Select a floor</h3>
+                        </div>
+                        <div class="legend-strip" id="seatLegend"></div>
+                    </div>
+                    <div class="seat-map-frame" id="seatMapFrame">
+                        <p class="empty-state">Pick a floor card to see the layout.</p>
+                    </div>
+                </article>
+
+                <aside class="content-card action-card">
+                    <div class="card-heading">
+                        <div>
+                            <p class="eyebrow">Seat action</p>
+                            <h3>Selection details</h3>
+                        </div>
+                    </div>
+                    <div id="seatSelectionPanel" class="seat-selection-panel">
+                        <p class="empty-state">Select an available seat to book it, or a seat you booked to release it.</p>
+                    </div>
+                </aside>
+            </div>
+
+            <article class="content-card">
+                <div class="card-heading">
+                    <div>
+                        <p class="eyebrow">Daily occupancy snapshot</p>
+                        <h3>Booked, free, and total by floor</h3>
+                    </div>
+                    <button class="ghost-button" id="refreshDailyReportButton">Refresh report</button>
+                </div>
+                <div class="report-table-wrapper">
+                    <table class="report-table">
+                        <thead>
+                        <tr>
+                            <th>Floor</th>
+                            <th>Total</th>
+                            <th>Booked</th>
+                            <th>Available</th>
+                            <th>Load</th>
+                        </tr>
+                        </thead>
+                        <tbody id="dailyReportBody"></tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <section class="panel" id="admin-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Admin workflow</p>
+                    <h2>Manage floors, layouts, reports, and scheduled summaries</h2>
+                </div>
+                <div class="inline-note" id="adminMessage">Sign in with OTP verification to unlock the admin controls.</div>
+            </div>
+
+            <div class="admin-shell">
+                <article class="content-card admin-auth-card">
+                    <div class="card-heading">
+                        <div>
+                            <p class="eyebrow">Secure login</p>
+                            <h3>Two-step admin authentication</h3>
+                        </div>
+                        <span class="status-chip" id="adminStatusChip">Signed out</span>
+                    </div>
+
+                    <form class="stacked-form" id="loginForm">
+                        <label class="field">
+                            <span>Username</span>
+                            <input type="text" id="adminUsername" placeholder="adi" autocomplete="username">
+                        </label>
+                        <label class="field">
+                            <span>Password</span>
+                            <input type="password" id="adminPassword" placeholder="SeatSurfer!2026" autocomplete="current-password">
+                        </label>
+                        <button class="primary-button" type="submit">Send OTP</button>
+                    </form>
+
+                    <form class="stacked-form hidden" id="otpForm">
+                        <label class="field">
+                            <span>One-time verification code</span>
+                            <input type="text" id="otpCode" inputmode="numeric" maxlength="6" placeholder="123456">
+                        </label>
+                        <button class="primary-button" type="submit">Verify and sign in</button>
+                    </form>
+
+                    <div class="auth-summary" id="authSummary"></div>
+                </article>
+
+                <div class="admin-grid hidden" id="adminWorkspace">
+                    <article class="content-card">
+                        <div class="card-heading">
+                            <div>
+                                <p class="eyebrow">Floors</p>
+                                <h3>Manage office floors</h3>
+                            </div>
+                        </div>
+                        <form class="stacked-form compact-form" id="floorForm">
+                            <input type="hidden" id="floorId">
+                            <label class="field">
+                                <span>Floor name</span>
+                                <input type="text" id="floorName" placeholder="Atlas Floor">
+                            </label>
+                            <label class="field">
+                                <span>Description</span>
+                                <input type="text" id="floorDescription" placeholder="Quiet focus area">
+                            </label>
+                            <label class="field">
+                                <span>Sort order</span>
+                                <input type="number" id="floorSortOrder" min="0" value="0">
+                            </label>
+                            <div class="button-row">
+                                <button class="primary-button" type="submit">Save floor</button>
+                                <button class="ghost-button" type="button" id="resetFloorFormButton">Clear</button>
+                            </div>
+                        </form>
+                        <div class="collection-list" id="adminFloorList"></div>
+                    </article>
+
+                    <article class="content-card">
+                        <div class="card-heading">
+                            <div>
+                                <p class="eyebrow">Seat types</p>
+                                <h3>Color-code the booking legend</h3>
+                            </div>
+                        </div>
+                        <form class="stacked-form compact-form" id="seatTypeForm">
+                            <input type="hidden" id="seatTypeId">
+                            <label class="field">
+                                <span>Code</span>
+                                <input type="text" id="seatTypeCode" placeholder="STANDARD">
+                            </label>
+                            <label class="field">
+                                <span>Name</span>
+                                <input type="text" id="seatTypeName" placeholder="Standing Desk">
+                            </label>
+                            <label class="field">
+                                <span>Description</span>
+                                <input type="text" id="seatTypeDescription" placeholder="Standing desk with two monitors">
+                            </label>
+                            <label class="field">
+                                <span>Color</span>
+                                <input type="color" id="seatTypeColor" value="#86b840">
+                            </label>
+                            <div class="checkbox-grid">
+                                <label><input type="checkbox" id="seatTypeMonitors"> Monitors</label>
+                                <label><input type="checkbox" id="seatTypeStanding"> Standing</label>
+                                <label><input type="checkbox" id="seatTypeChair" checked> Requires chair</label>
+                            </div>
+                            <div class="button-row">
+                                <button class="primary-button" type="submit">Save seat type</button>
+                                <button class="ghost-button" type="button" id="resetSeatTypeFormButton">Clear</button>
+                            </div>
+                        </form>
+                        <div class="collection-list" id="seatTypeList"></div>
+                    </article>
+
+                    <article class="content-card layout-card">
+                        <div class="card-heading">
+                            <div>
+                                <p class="eyebrow">Floor layout designer</p>
+                                <h3>Replace the future seat map from an effective date</h3>
+                            </div>
+                            <div class="inline-note">This behaves like a cinema-seat editor and cancels future bookings on removed seats.</div>
+                        </div>
+                        <div class="controls-grid layout-controls">
+                            <label class="field">
+                                <span>Floor</span>
+                                <select id="layoutFloorSelect"></select>
+                            </label>
+                            <label class="field">
+                                <span>Effective from</span>
+                                <input type="date" id="layoutEffectiveDate">
+                            </label>
+                            <label class="field">
+                                <span>Rows</span>
+                                <input type="number" id="layoutRows" min="1" max="30" value="6">
+                            </label>
+                            <label class="field">
+                                <span>Columns</span>
+                                <input type="number" id="layoutColumns" min="1" max="30" value="12">
+                            </label>
+                        </div>
+
+                        <div class="layout-palette" id="layoutPalette"></div>
+                        <div class="layout-editor-shell">
+                            <div id="layoutEditor" class="layout-editor-grid"></div>
+                            <div class="layout-help">
+                                <p><strong>How it works</strong></p>
+                                <p>Select a seat type, then click grid cells to place seats. Switch to Erase to remove them.</p>
+                                <div class="button-row">
+                                    <button class="ghost-button" type="button" id="loadLayoutButton">Load current layout</button>
+                                    <button class="ghost-button" type="button" id="clearLayoutButton">Clear grid</button>
+                                    <button class="primary-button" type="button" id="saveLayoutButton">Save layout</button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="content-card reports-card">
+                        <div class="card-heading">
+                            <div>
+                                <p class="eyebrow">Reports</p>
+                                <h3>Export PDFs, inspect load, and trigger the monthly email</h3>
+                            </div>
+                        </div>
+                        <div class="controls-grid">
+                            <label class="field">
+                                <span>Daily report date</span>
+                                <input type="date" id="adminReportDate">
+                            </label>
+                            <label class="field">
+                                <span>Load from</span>
+                                <input type="date" id="loadFromDate">
+                            </label>
+                            <label class="field">
+                                <span>Load to</span>
+                                <input type="date" id="loadToDate">
+                            </label>
+                            <label class="field">
+                                <span>Monthly year</span>
+                                <input type="number" id="monthlyYear">
+                            </label>
+                            <label class="field">
+                                <span>Monthly month</span>
+                                <input type="number" id="monthlyMonth" min="1" max="12">
+                            </label>
+                        </div>
+                        <div class="button-row">
+                            <button class="primary-button" type="button" id="loadAdminReportsButton">Load analytics</button>
+                            <button class="ghost-button" type="button" id="downloadPdfButton">Download PDF</button>
+                            <button class="ghost-button" type="button" id="emailMonthlyReportButton">Email monthly report</button>
+                        </div>
+                        <div class="report-results">
+                            <div id="loadReportPanel"></div>
+                            <div id="monthlyReportPanel"></div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script src="./assets/config.js"></script>
+<script src="./assets/app.js" type="module"></script>
+</body>
+</html>

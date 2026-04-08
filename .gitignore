@@ -1,0 +1,7 @@
+.DS_Store
+.idea/
+.m2/
+.playwright-cli/
+tmp/
+backend/target/
+frontend/.vercel/
